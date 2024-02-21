@@ -1,3 +1,15 @@
+datos/*
+!datos/README.txt
+
+fotos/*
+!fotos/README.txt
+
+fotos/*
+!fotos/README.txt
+
+puntos/*
+!puntos/README.txt
+
 # History files
 .Rhistory
 .Rapp.history

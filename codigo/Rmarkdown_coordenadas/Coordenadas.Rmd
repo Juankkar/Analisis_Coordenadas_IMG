@@ -1,0 +1,78 @@
+---
+title: "Obtención de coordenadas UTM"
+author: "Juan Carlos García Estupiñán"
+date: "2024-02-20"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Obtención de coordenadas DD de imagenes ***JPG***.
+
+Para ello primero instalaremos y cargaremos las librerías para trabajar.
+
+-   `Tidyverse`: manipulación y análisis de datos.
+-   `exifr`: Extracción de información para imágenes.
+-   `glue`: Pegar cadenas de texto entre sí.
+
+```{r echo=FALSE, warning=FALSE}
+# Paquetes necesarios
+packages <- c("tidyverse", "exifr", "glue")
+
+# Instalamos los paquetes 
+installed_packages <- packages %in% rownames(installed.packages())
+if (any(installed_packages == FALSE)){
+  install.packages(packages[!installed_packages])
+}
+# Cargar las librarías
+invisible(lapply(packages, library, character.only = TRUE))
+```
+
+## Leer los archivos JPG en la carpeta *fotos*
+
+You can also embed plots, for example:
+
+```{r, echo=FALSE, warning=FALSE}
+archivos <- list.files("..\\..\\fotos\\")
+archivos_ruta <- glue("..\\..\\fotos\\{archivos}")
+exif_data <- read_exif(archivos_ruta)
+```
+
+## Filtramos los campos de interés.
+
+En concreto los campos que queremos son:
+
+-   FileName: Nombre del archivo.
+-   GPSDateTime: Fecha, hora en la que se tomó la foto.
+-   GPSPosition: Coordenadas con la latitud y longitud. Se dividirán en dos campos.
+
+```{r, echo=FALSE}
+exif_data_processed <- exif_data %>%
+  select(FileName,
+         GPSDateTime,
+         GPSPosition) %>%
+  separate_wider_delim(GPSPosition, 
+                       delim = " ",
+                       names = c("Latitude", "Longitude")) %>%
+  mutate(Latitude = as.double(Latitude),
+         Longitude = as.double(Longitude),
+         FileName = str_remove(FileName, pattern = ".jpg"))
+
+exif_data_processed
+```
+
+```{r, echo=FALSE}
+exif_data_processed %>%
+  ggplot(aes(Latitude, Longitude)) +
+  geom_point() +
+  geom_line() 
+```
+
+```{r, echo=FALSE}
+exif_data_processed %>%
+  write_csv("..\\..\\datos\\coordenadas.csv")
+
+list.files("..\\..\\datos\\")
+```
