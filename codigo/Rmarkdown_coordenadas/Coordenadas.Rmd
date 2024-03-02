@@ -50,7 +50,8 @@ En concreto los campos que queremos son:
 
 ```{r, echo=FALSE}
 exif_data_processed <- exif_data %>%
-  select(FileName,
+  select(SourceFile,
+         FileName,
          GPSDateTime,
          GPSPosition) %>%
   separate_wider_delim(GPSPosition, 
@@ -68,6 +69,7 @@ exif_data_processed %>%
   ggplot(aes(Latitude, Longitude)) +
   geom_point() +
   geom_line() 
+
 ```
 
 ```{r, echo=FALSE}

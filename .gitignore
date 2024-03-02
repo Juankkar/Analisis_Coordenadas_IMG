@@ -10,6 +10,9 @@ fotos/*
 puntos/*
 !puntos/README.txt
 
+codigo/*.png
+codigo/*.pdf
+
 # History files
 .Rhistory
 .Rapp.history
